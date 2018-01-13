@@ -27,7 +27,7 @@ if (meta.architecture == architecture.mlc)
 elseif (meta.architecture == architecture.tlc)
     summed_errors = zeros(meta.pagesPerBlock/3,meta.bytesPerPage*8);
     %tmp_sums = zeros(meta.pagesPerBlock/3,meta.bytesPerPage*8);
-    pages_order = [0:3:515,1:3:515,2:3:515];
+    pages_order = [0:3:257,1:3:257,2:3:257;258:3:515,259:3:515,260:3:515];
     pages_coupling = reshape(pages_order,meta.pagesPerBlock/3,3);
 end
 
@@ -53,66 +53,17 @@ while ~feof(fid)
     end
     summed_errors_per_loop(summed_errors_per_loop > 1) = 1;
     summed_errors = summed_errors + summed_errors_per_loop;
-    %{
-    if (meta.architecture == architecture.mlc)
-        for i = 1:meta.pagesPerBlock/2
-            tmp_sums(i,:) = sum(m(pages_coupling(i,:),:));
-            %tmp_sums(i,:) = m(right_pages(i)+1,:)+m(left_pages(i)+1,:);
-        end
-        sums = sums + tmp_sums;
-
-    elseif (meta.architecture == architecture.tlc)
-        triplet = 1;
-        for i = 1:3:meta.pagesPerBlock
-            tmp_sums(triplet,:) = sum(m(i:i+2,:));
-            triplet = triplet+1;
-        end
-        %{
-        for i = 1:3:meta.pagesPerBlock/3
-            temp_sums(i,:) = sum(m(i:i+2,:));
-        end
-        %}
-    else
-    % unsupporteed combination of manufacturere and architecture.
-        error_map = zeros(1,1);
-        return;        
-    end
-    %}
-    
-    
-    
     iter = iter + 1;
     waitbar(double(iter/numOfLines),wb,sprintf('Reading Error Map: P/E Cycle %d/%d',iter,numOfLines));
 end
 close(wb);
 delete(wb);
-
 fclose(fid);
 
-if (meta.architecture == architecture.mlc)
-    summed_errors = zeros(meta.pagesPerBlock/2,meta.bytesPerPage*8);
-    for i = 1:meta.pagesPerBlock/2
-        %asuming an error in both pages is not possible. 
-        summed_errors(i,:) = m(right_pages(i)+1,:)+m(left_pages(i)+1,:);
-    end
-    left = summed_errors(1:2:end,:);
-    right = summed_errors(2:2:end,:);
-
-elseif (meta.architecture == architecture.tlc)
-    summed_errors = zeros(meta.pagesPerBlock/3, meta.bytesPerPage*8);
-    for i = 1:3:meta.pagesPerBlock/3 
-        summed_errors(i,:) = sum(m(i:i+2,:));
-    end
-    left = summed_errors(1:meta.pagesPerBlock/6,:);
-    right = summed_errors(meta.pagesPerBlock/6 + 1:end, :);
-else
-    % unsupporteed combination of manufacturere and architecture.
-    error_map = zeros(1,1);
-    return;        
-end
+left = summed_errors(1:2:end,:);
+right = summed_errors(2:2:end,:);
 error_map = [left,right];
-%disp ('writing sum');
-%dlmwrite('F:\\test2.sum',error_map);
+
 
 
 
