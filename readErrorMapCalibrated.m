@@ -36,8 +36,8 @@ while ~feof(fid)
     m = zeros(meta.pagesPerBlock,meta.bytesPerPage*8);
     arr =  str2num(fgets(fid));
     i = 2;
-    length = length(arr);
-    while i < length
+    len = length(arr);
+    while i < len
         page = arr(i);
         i = i+1;
         bits = arr(i+1:i+arr(i));
