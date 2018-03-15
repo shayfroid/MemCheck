@@ -30,6 +30,7 @@ if(~secondRead)
 
     example = parseFile(s,meta.testID,numOfLines);
 
+    % check if the testID qualifies for autosum functionality
     autoSum = any(testID.autoSumTestID == meta.testID);
     if(autoSum)
         n = example;
