@@ -32,6 +32,7 @@ switch testid
     title = sprintf('%s\n',['which read method to use?',fast_description, slow_description{:}]);
     read_method = questdlg(title,'Choose read method','fast','slow','fast');
         if (strcmp(read_method,'fast'))
+
             m = readErrorMap(filePath,numOfLines);
         else
             m = readErrorMapCalibrated(filePath,numOfLines);
