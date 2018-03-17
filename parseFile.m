@@ -24,14 +24,14 @@ switch testid
     % option requires contiuous sum of the error map and thus a lot slower
     % but more acuarate option.
     
-    fast_description = 'fast: assuming each cell with an error\nwill only show an error in one of its represented pages.\n'
+    fast_description = 'fast: assuming each cell with an error\nwill only show an error in one of its represented pages.\n';
     slow_description = {'slow: no asumptions are made.'
                         'input validation is being performed on each cell'
                         'and if it is representing multiple bit errors in the same P/E cycle'
-                        'they will all be considered as a single error.'}
-    title = sprintf('%s\n',['which read method to use?',fast_description, slow_description{:}])
-    read_method = questdlg(title,'Choose read method','fast','slow','fast')
-        if (read_method == 'fast')
+                        'they will all be considered as a single error.'};
+    title = sprintf('%s\n',['which read method to use?',fast_description, slow_description{:}]);
+    read_method = questdlg(title,'Choose read method','fast','slow','fast');
+        if (strcmp(read_method,'fast'))
             m = readErrorMap(filePath,numOfLines);
         else
             m = readErrorMapCalibrated(filePath,numOfLines);

@@ -3,7 +3,7 @@ function error_map = readErrorMapCalibrated(filepath,numOfLines)
 % The function go through the file, check it's consistency and start to parse the data
 % The function then saves everything in 'error_map' and returns it.
 % s		The file to read
-
+t = cputime;
 fid = fopen(filepath);
 meta = metaData(str2num(fgets(fid)));
 
@@ -29,6 +29,8 @@ elseif (meta.architecture == architecture.tlc)
     %tmp_sums = zeros(meta.pagesPerBlock/3,meta.bytesPerPage*8);
     pages_order = [0:3:257,1:3:257,2:3:257;258:3:515,259:3:515,260:3:515];
     pages_coupling = reshape(pages_order,meta.pagesPerBlock/3,3);
+    
+
 end
 
 iter = 0;
@@ -47,6 +49,7 @@ while ~feof(fid)
         m(page+1,bits+1) = 1;      
     end
     
+    
     summed_errors_per_loop = zeros(size(summed_errors));
     for i = 1:size(pages_coupling,1)
        summed_errors_per_loop(i,:) = sum(m(pages_coupling(i,:)+1,:));
@@ -60,10 +63,11 @@ close(wb);
 delete(wb);
 fclose(fid);
 
+sum(sum(summed_errors>0))
 left = summed_errors(1:2:end,:);
 right = summed_errors(2:2:end,:);
 error_map = [left,right];
-
+cputime-t
 
 
 
