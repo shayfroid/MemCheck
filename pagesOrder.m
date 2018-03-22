@@ -19,4 +19,6 @@ elseif(md.testID == testID.standardTest)
         str = strsplit(strarr{i},'_');
         arr(i) = str2double(str{2});
     end
+    
 end
+assert(size(arr,2)==md.pagesPerBlock, 'Reading pages order: line length does not match the expected length(number of pages)')
