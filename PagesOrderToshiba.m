@@ -1,6 +1,5 @@
 function [lp, mp, up ] = PagesOrderToshiba(chipArchitecture, numOfPages)
-%PAGESORDERTOSHIBA Return 3 vectors representing the pages under each
-%plane.
+%PAGESORDERTOSHIBA Return 3 vectors representing the pages under each plane.
 %    
 % Currently only supports TLC architecture of Toshiba chips.
 

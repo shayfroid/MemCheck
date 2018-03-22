@@ -10,16 +10,7 @@ fclose(fid);
 
 if (md.testID == testID.errorMap)
     arr = str2num(str);
-   %{
-    if (md.architecture == architecture.mlc)
-        arr = reshape(arr,md.pagesPerBlock/2,2)';
-    elseif (md.architecture == architecture.tlc)
-        arr = reshape(arr,md.pagesPerBlock/3,3)';
-    else
-        err = sprintf('Unsupported aarchitecture: %d', md.architecture);
-        msgbox(err,'Unsupported architecture'); 
-    end
-   %}
+    
 elseif(md.testID == testID.standardTest)   
     strarr = strsplit(str,'\t');
     strarr = strarr(2:2:(2*numOfPages));
