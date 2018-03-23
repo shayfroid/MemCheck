@@ -7,7 +7,8 @@ function error_map = readErrorMap(filepath,numOfLines)
 %lines = countLines(s);
 fid = fopen(filepath);
 meta = metaData(str2num(fgets(fid)));
-
+% skip the "pages order" line
+fgets(fid);
 
 if(meta.testID ~= testID.errorMap)
      err = sprintf('Incompatible file parser.\n trying to use readErrorMAp file parser while metaData specifies test ID of %d',...
@@ -42,53 +43,42 @@ else
     delete(wb);
 end
 fclose(fid);
+pages_order = pagesOrder(filepath);
+ppb = meta.pagesPerBlock;
 
 % calculate pages order
-if (meta.manufacturer == manufecturers.hynix && meta.architecture == architecture.mlc)
+if ( meta.architecture == architecture.mlc)
     % Heynix manufacturer
-    [left_pages,right_pages] = pagesOrderHynix(meta.architecture,meta.pagesPerBlock);
-elseif (meta.manufacturer == manufecturers.toshiba && meta.architecture == architecture.tlc)
-    % for TLC not using external function to calculate pages order since
-    %                      _________
-    % its straight fwd... | 0 | 258 | etc...
-    %                     |---------|
-    %             WL 0    | 1 | 259 |
-    %                     |---------|
-    %                     | 2 | 260 |
-    %                      ---------
-    %                     left | right
+    %[left_pages,right_pages] = pagesOrderHynix(meta.architecture,meta.pagesPerBlock);
+    left_pages = pages_order(1:ppb/2);
+    right_pages = pages_order((ppb/2) + 1:end);
     
-    %[l_plane, m_plane, u_plane] = PagesOrderToshiba(meta.architecture, meta.pagesPerBlock);
-else
-    err = sprintf('Unsupported manufacturer or architecture for BitErrorMap: In order to rander Bit Error Map graph the pages order and the coupling must be known. At the moment the the data is known for Hynix with MLC architecture or Toshiba with TLC architecture only.');
-    msgbox(err,'Unsupported manufacturer or architecture'); 
-    return;
-end
-
-if (meta.manufacturer == manufecturers.hynix && meta.architecture == architecture.mlc)
-    sums = zeros(meta.pagesPerBlock/2,meta.bytesPerPage*8);
+    sums = zeros(ppb/2,meta.bytesPerPage*8);
     for i = 1:meta.pagesPerBlock/2
         %asuming an error in both pages is not possible. 
         sums(i,:) = m(right_pages(i)+1,:)+m(left_pages(i)+1,:);
     end
     left = sums(1:2:end,:);
     right = sums(2:2:end,:);
+    
+elseif (meta.architecture == architecture.tlc)
+    sums = zeros(ppb/3, meta.bytesPerPage*8);
+    triplets = [pages_order(1:ppb/3);
+                pages_order(ppb/3+1:2*(ppb/3));
+                pages_order(2*(ppb/3)+1:end)];
 
-elseif (meta.manufacturer == manufecturers.toshiba && meta.architecture == architecture.tlc)
-    sums = zeros(meta.pagesPerBlock/3, meta.bytesPerPage*8);
-    triplet = 1;
-    for i = 1:3:meta.pagesPerBlock
-        sums(triplet,:) = sum(m(i:i+2,:));
-        triplet = triplet+1;
+    for triplet = 1:ppb/3
+        sums(triplet,:) = sum(m(triplets(:,triplet)+1,:));
     end
-    left = sums(1:meta.pagesPerBlock/6,:);
-    right = sums(meta.pagesPerBlock/6 + 1:end, :);
+    left = sums(1:2:ppb/3,:);
+    right = sums(2:2:ppb/3,:);
+    
 else
-    % unsupporteed combination of manufacturere and architecture.
-    error_map = zeros(1,1);
+    err = sprintf('Unsupported architecture for BitErrorMap.');
+    msgbox(err,'Unsupported manufacturer'); 
     return;
-           
 end
+
 error_map = [left,right];
 %disp ('writing sum');
 %dlmwrite('F:\\test2.sum',error_map);
