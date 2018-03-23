@@ -3,7 +3,7 @@ function error_map = readErrorMapCalibrated(filepath,numOfLines)
 % The function go through the file, check it's consistency and start to parse the data
 % The function then saves everything in 'error_map' and returns it.
 % s		The file to read
-t = cputime;
+
 fid = fopen(filepath);
 meta = metaData(str2num(fgets(fid)));
 % skip the "pages order" line
@@ -64,11 +64,11 @@ close(wb);
 delete(wb);
 fclose(fid);
 
-%sum(sum(summed_errors>0))
+
 left = summed_errors(1:2:end,:);
 right = summed_errors(2:2:end,:);
 error_map = [left,right];
-cputime-t
+
 
 
 
