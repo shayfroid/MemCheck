@@ -6,7 +6,8 @@ function error_map = readErrorMapCalibrated(filepath,numOfLines)
 t = cputime;
 fid = fopen(filepath);
 meta = metaData(str2num(fgets(fid)));
-
+% skip the "pages order" line
+fgets(fid);
 
 if(meta.testID ~= testID.errorMap)
      err = sprintf('Incompatible file parser.\n trying to use readErrorMAp file parser while metaData specifies test ID of %d',...
@@ -18,19 +19,19 @@ end
 
 wb = waitbar(0,sprintf('Reading Error Map: %d%%',0)); 
 m = zeros(meta.pagesPerBlock,meta.bytesPerPage*8);
+pages_order = pagesOrder(filepath);
+ppb = meta.pagesPerBlock;
 
 if (meta.architecture == architecture.mlc)
     summed_errors = zeros(meta.pagesPerBlock/2,meta.bytesPerPage*8);
-    %tmp_sums = zeros(meta.pagesPerBlock/2,meta.bytesPerPage*8);
-    pages_order = pagesOrderHynix(meta.architecture,meta.pagesPerBlock);
-    pages_coupling = reshape(pages_order,meta.pagesPerBlock/2,2);
+    pages_coupling = [pages_order(1:ppb/2);pages_order((ppb/2) + 1:end)]';
+
 elseif (meta.architecture == architecture.tlc)
     summed_errors = zeros(meta.pagesPerBlock/3,meta.bytesPerPage*8);
-    %tmp_sums = zeros(meta.pagesPerBlock/3,meta.bytesPerPage*8);
-    pages_order = [0:3:257,1:3:257,2:3:257;258:3:515,259:3:515,260:3:515];
-    pages_coupling = reshape(pages_order,meta.pagesPerBlock/3,3);
+    pages_coupling = [pages_order(1:ppb/3);
+                        pages_order(ppb/3+1:2*(ppb/3));
+                        pages_order(2*(ppb/3)+1:end)]';
     
-
 end
 
 iter = 0;
@@ -63,7 +64,7 @@ close(wb);
 delete(wb);
 fclose(fid);
 
-sum(sum(summed_errors>0))
+%sum(sum(summed_errors>0))
 left = summed_errors(1:2:end,:);
 right = summed_errors(2:2:end,:);
 error_map = [left,right];
