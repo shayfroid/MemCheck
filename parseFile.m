@@ -1,4 +1,4 @@
-function m = parseFile(filePath,testid, numOfLines)
+function m = parseFile(filePath,testid, numOfLines, handles)
 % m = PARSEFILE(filePath, testid, numOfLines) parsing the file and fetch the data according to the test we check
 %testID = getTestID(filePath);
 switch testid
@@ -24,18 +24,26 @@ switch testid
     % option requires contiuous sum of the error map and thus a lot slower
     % but more acuarate option.
     
-    fast_description = 'fast: assuming each cell with an error\nwill only show an error in one of its represented pages.\n';
-    slow_description = {'slow: no asumptions are made.'
-                        'input validation is being performed on each cell'
-                        'and if it is representing multiple bit errors in the same P/E cycle'
-                        'they will all be considered as a single error.'};
-    title = sprintf('%s\n',['which read method to use?',fast_description, slow_description{:}]);
-    read_method = questdlg(title,'Choose read method','fast','slow','fast');
-        if (strcmp(read_method,'fast'))
+        fast_description = 'fast: assuming each cell with an error\nwill only show an error in one of its represented pages.\n';
+        slow_description = {'slow: no asumptions are made.'
+                            'input validation is being performed on each cell'
+                            'and if it is representing multiple bit errors in the same P/E cycle'
+                            'they will all be considered as a single error.'};
+        title = sprintf('%s\n',['which read method to use?',fast_description, slow_description{:}]);
+        read_method = questdlg(title,'Choose read method','fast','slow','fast');
 
-            m = readErrorMap(filePath,numOfLines);
+       graph_type = questdlg(title,'Choose graph type','Normal','Levels','Normal');
+
+       if strcmp(graph_type, 'Levels')
+          set(handles.errorMapButton, 'string', 'Bit Error Map (Levels)');
+       else
+          set(handles.errorMapButton, 'string', 'Bit Error Map');
+       end
+
+        if ((strcmp(read_method,'fast')) || strcmp(graph_type, 'Levels'))
+            m = readErrorMap(filePath,numOfLines, graph_type);
         else
-            m = readErrorMapCalibrated(filePath,numOfLines);
+            m = readErrorMapCalibrated(filePath,numOfLines, graph_type);
         end
 
     otherwise

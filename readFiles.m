@@ -1,4 +1,4 @@
-function [m,meta,totalFilesRead,firstPath] = readFiles(filenames, path, numOfLines)
+function [m,meta,totalFilesRead,firstPath] = readFiles(filenames, path, numOfLines, handles)
 % READFILES read all the test files and create the main structures
 % [m,meta,totalFilesRead,firstPath] = READFILES(filenames, path)
 % Returns a vector with all the structures we need for the test
@@ -28,7 +28,7 @@ if(~secondRead)
     fclose(fid);
     %case trying to read LLH second part
 
-    example = parseFile(s,meta.testID,numOfLines);
+    example = parseFile(s,meta.testID,numOfLines, handles);
 
     % check if the testID qualifies for autosum functionality
     autoSum = any(testID.autoSumTestID == meta.testID);
@@ -59,7 +59,7 @@ for i = startingIndex:size(filenames,2)
         tmp_n = [];
     else
         s = strcat(path,filenames{i});
-        tmp_n = parseFile(s,getTestID(path,filenames{i}), numOfLines);
+        tmp_n = parseFile(s,getTestID(path,filenames{i}), numOfLines, handles);
         if(~secondRead && ~isequal(size(example,2),size(tmp_n,2)))
             err = sprintf('Error reading files.\n %s have %d columns\n while other file\\s have %d.\n',...
                 filenames{i},size(tmp_n,2),size(example,2));

@@ -1,4 +1,4 @@
-function error_map = readErrorMapCalibrated(filepath,numOfLines)
+function error_map = readErrorMapCalibrated(filepath,numOfLines, graph_type)
 % error_map = READERRORMAP(s) Read the error map test file and return the map as a matrix
 % The function go through the file, check it's consistency and start to parse the data
 % The function then saves everything in 'error_map' and returns it.

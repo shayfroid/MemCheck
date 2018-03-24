@@ -23,7 +23,11 @@ if(combine ~= 1)
         set(h,'marker','none');
     end
     title(sprintf('Bit Error Map - left (%s)%s',arc_strings{metaData.architecture + 1}, filterString));
-    ylabel('Row');
+    if metaData.architecture == architecture.mlc
+        ylabel('Pair');
+    else
+        ylabel('Triplet');
+    end
     zlabel('Errors');
     xlabel('Cell');
     set(gca,'YLim',[0 size(M,1)]);
@@ -36,7 +40,11 @@ if(combine ~= 1)
         set(h,'marker','none');
     end
     title(sprintf('Bit Error Map - right (%s)%s',arc_strings{metaData.architecture + 1},filterString));
-    ylabel('Row');
+    if metaData.architecture == architecture.mlc
+        ylabel('Pair');
+    else
+        ylabel('Triplet');
+    end
     zlabel('Errors');
     xlabel('Cell');
     set(gca,'YLim',[0 size(M,1)]);
@@ -63,7 +71,11 @@ else
     set(h,'Color','r');
     hold off
     title(sprintf('Bit Error Map - left & right (%s)%s',arc_strings{metaData.architecture + 1},filterString));
-    ylabel('Row');
+    if metaData.architecture == architecture.mlc
+        ylabel('Row');
+    else
+        ylabel('Word Line');
+    end
     zlabel('Errors');
     xlabel('Cell');
     %set(gca,'XLim',[0 metaData(4)*8]);

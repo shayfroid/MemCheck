@@ -22,7 +22,7 @@ function varargout = testUI(varargin)
 
 % Edit the above text to modify the response to help testUI
 
-% Last Modified by GUIDE v2.5 16-Nov-2017 00:58:21
+% Last Modified by GUIDE v2.5 24-Mar-2018 23:41:17
 
 % Begin initialization code - DO NOT EDIT.           
 gui_Singleton = 1;
@@ -337,7 +337,7 @@ M = [];
 M2 = [];
 firstFilePath = '';
 %reading metadata and setting global M matrix
-[M,metaData,filesRead, firstFilePath] = readFiles(filenames,filepath,numOfLines);
+[M,metaData,filesRead, firstFilePath] = readFiles(filenames,filepath,numOfLines,handles);
 
 
 
@@ -1117,8 +1117,22 @@ end
 cb = get(handles.errorMapCB,'value');
 markers = get(handles.markersCB,'value');
 markers_size = get(handles.errorMapMarkerSize, 'value');
-errorMap(M, metaData, min,max,cb,markers,markers_size);
 
+% readErororMap and readErrorMapCalibraterd are prompting for the type of
+% graph to display (normal or by levels) and will return M with different
+% dimensions in each case.
+% if its normal ploting - the number of rows will be pagesPerBlock/6 (tuples
+% of 3 pages are summed and the pages are divided to left and right. total
+% of 2*3 division.
+% if its "levels" plotting, readErrorMap and readErrorMap Calibrates will
+% return M with pagesPerBlock/2 rows.
+if size(M,1)==metaData.pagesPerBlock/2
+    % ploting by levels.
+    errorMapLevels(M, metaData, min,max,cb,markers,markers_size);
+else
+    % mormal ploting
+    errorMap(M, metaData, min,max,cb,markers,markers_size);
+end
 
 % --- Executes on slider movement.
 function errorMapSliderMin_Callback(hObject, eventdata, handles)
@@ -1293,7 +1307,7 @@ else
     %[M2,trash1,filesRead, trash3] = readFiles(filenames,filepath,numOfLines);
 end
 %[M2,trash1,filesRead, trash3] = readFiles(filenames,filepath,numOfLines);
-[M2,~,filesRead,~] = readFiles(filenames,filepath,numOfLines);
+[M2,~,filesRead,~] = readFiles(filenames,filepath,numOfLines, handles);
 
 if(size(M2,2) == size(M,2))
     handles.numOfIterations = size(M{1},1) + numOfLines;

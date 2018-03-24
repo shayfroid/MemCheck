@@ -1,4 +1,4 @@
-function error_map = readErrorMap(filepath,numOfLines)
+function error_map = readErrorMap(filepath,numOfLines, graph_type)
 % error_map = READERRORMAP(s) Read the error map test file and return the map as a matrix
 % The function go through the file, check it's consistency and start to parse the data
 % The function then saves everything in 'error_map' and returns it.
@@ -48,30 +48,49 @@ ppb = meta.pagesPerBlock;
 
 % calculate pages order
 if ( meta.architecture == architecture.mlc)
-    % Heynix manufacturer
-    %[left_pages,right_pages] = pagesOrderHynix(meta.architecture,meta.pagesPerBlock);
-    left_pages = pages_order(1:ppb/2);
-    right_pages = pages_order((ppb/2) + 1:end);
-    
-    sums = zeros(ppb/2,meta.bytesPerPage*8);
-    for i = 1:meta.pagesPerBlock/2
-        %asuming an error in both pages is not possible. 
-        sums(i,:) = m(right_pages(i)+1,:)+m(left_pages(i)+1,:);
-    end
-    left = sums(1:2:end,:);
-    right = sums(2:2:end,:);
-    
-elseif (meta.architecture == architecture.tlc)
-    sums = zeros(ppb/3, meta.bytesPerPage*8);
-    triplets = [pages_order(1:ppb/3);
-                pages_order(ppb/3+1:2*(ppb/3));
-                pages_order(2*(ppb/3)+1:end)];
+    if strcmp(graph_type, 'Levels')
+        left_low = m(pages_order(1:2:ppb/2)+1,:);
+        right_low = m(pages_order(2:2:ppb/2)+1,:);
+        left_high = m(pages_order(ppb/2+1:2:end)+1,:);
+        right_high = m(pages_order(ppb/2+2:2:end)+1,:);
+        left = [left_low;left_high];
+        right = [right_low;right_high];
+    else
+        low_pages = pages_order(1:ppb/2);
+        high_pages = pages_order((ppb/2) + 1:end);
 
-    for triplet = 1:ppb/3
-        sums(triplet,:) = sum(m(triplets(:,triplet)+1,:));
+        sums = zeros(ppb/2,meta.bytesPerPage*8);
+        for i = 1:ppb/2
+            %asuming an error in both pages is not possible. 
+            sums(i,:) = m(low_pages(i)+1,:)+m(high_pages(i)+1,:);
+        end
+        left = sums(1:2:end,:);
+        right = sums(2:2:end,:);
     end
-    left = sums(1:2:ppb/3,:);
-    right = sums(2:2:ppb/3,:);
+ 
+elseif (meta.architecture == architecture.tlc)
+    if strcmp(graph_type, 'Levels')
+        left_low = m(pages_order(1:2:ppb/3)+1,:);
+        right_low = m(pages_order(2:2:ppb/3)+1,:);
+        left_mid = m(pages_order(ppb/3+1:2:(2*(ppb/3)))+1,:);
+        right_mid = m(pages_order(ppb/3+2:2:(2*(ppb/3)))+1,:);
+        left_high = m(pages_order(2*(ppb/3)+1:2:end)+1,:);
+        right_high = m(pages_order(2*(ppb/3)+2:2:end)+1,:);
+        
+        left = [left_low; left_mid; left_high];
+        right = [right_low; right_mid; right_high];
+    else
+        sums = zeros(ppb/3, meta.bytesPerPage*8);
+        triplets = [pages_order(1:ppb/3);
+                    pages_order(ppb/3+1:2*(ppb/3));
+                    pages_order(2*(ppb/3)+1:end)];
+
+        for triplet = 1:ppb/3
+            sums(triplet,:) = sum(m(triplets(:,triplet)+1,:));
+        end
+        left = sums(1:2:ppb/3,:);
+        right = sums(2:2:ppb/3,:);
+    end
     
 else
     err = sprintf('Unsupported architecture for BitErrorMap.');
@@ -80,8 +99,7 @@ else
 end
 
 error_map = [left,right];
-%disp ('writing sum');
-%dlmwrite('F:\\test2.sum',error_map);
+
 
 
 
