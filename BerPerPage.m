@@ -9,31 +9,35 @@ function  BerPerPage(M,metaData,pagesString,filepath,compactGraph)
 % works only for all points, for average see BERPERPAGEAVERAGES
 
 if (metaData.architecture ~= architecture.mlc && metaData.architecture ~= architecture.tlc)
-    msgID = 'MYFUN:Bad_architecture';
-    throw(MException(msgID,'Unsupported architecture for BerPErPage'));
+    msgbox('Unsupported architecture for BerPErPage');
+    return;
 end
 
 po = pagesOrder(filepath);
+ppb = metaData.pagesPerBlock;
+
+if metaData.architecture == architecture.mlc
+    low_pages = po(1:ppb/2);
+    high_pages = po(1+(ppb/2):end);
+else
+    low_pages = po(1:ppb/3);
+    middle_pages = po(ppb/3+1:2*(ppb/3));
+    high_pages = po(2*(ppb/3)+1:end);
+end
+
 if(isempty(pagesString))
-    pages = (0:(metaData.pagesPerBlock-1));
+    pages = (0:(ppb-1));
 elseif (strcmpi(pagesString,'low'))
-    if metaData.architecture == architecture.mlc
-        pages = po(1:(metaData.pagesPerBlock/2));
-    else  %metaData.architecture == architecture.tlc
-        pages = po(1:3:end);
-    end
+    pages = low_pages;
 elseif (strcmpi(pagesString, 'middle'))
     if metaData.architecture == architecture.tlc
-        pages = po(2:3:end);
+        pages = middle_pages;
     else
-        throw(MException('MYFUN:Bad_filter', '"middle" filter is only meaningful with TLC architecture'));
+        msgbox('"middle" filter is only meaningful for TLC architecture');
+        return;
     end
 elseif (strcmpi(pagesString,'high'))
-    if metaData.architecture == architecture.mlc
-        pages = po(1+(metaData.pagesPerBlock/2):metaData.pagesPerBlock);
-    else
-        pages = po(3:3:end);
-    end
+    pages = high_pages;
 else
     pages = str2num(pagesString);
 end
@@ -63,22 +67,20 @@ for i = 0:(metaData.pagesPerBlock-1)
         X = ones(1,size(M,1)).*i;
         Z = (M(:,2*indexOfI)+M(:,(2*indexOfI)-1))./(metaData.bytesPerPage*8);
         h = plot3(X,Y,Z);
-        if (metaData.architecture == architecture.mlc && (indexOfI > (metaData.pagesPerBlock/2))) || ... 
-            (metaData.architecture == architecture.tlc && (mod(indexOfI-1,3) == 2))
+        if (any(high_pages == i))
             set(h,'Color','r');
             if(~onceHigh)
                 hH = h;
                 onceHigh = true;
             end
-        elseif metaData.architecture == architecture.mlc || ...
-                (mod(indexOfI-1,3) == 0)
+        elseif (any(low_pages == i))
             set(h,'Color','b');
             if(~onceLow)
                 hL = h;
                 onceLow = true;
             end
         else
-            % TLC architecture and "middle" page
+            % "middle" page
             set(h,'Color','g');
             if(~onceMid)
                 hM = h;

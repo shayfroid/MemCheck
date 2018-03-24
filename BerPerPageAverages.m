@@ -17,18 +17,9 @@ if (metaData.architecture ~= architecture.mlc && metaData.architecture ~= archit
 end
 
 po = pagesOrder(filepath);
-%{
-if(isempty(pagesString))
-    pages = (0:(metaData.pagesPerBlock-1));
-elseif (strcmpi(pagesString,'low'))
-    pages = po(1:(metaData.pagesPerBlock/2));
-elseif (strcmpi(pagesString,'high'))
-     pages = po(1+(metaData.pagesPerBlock/2):metaData.pagesPerBlock);
-else
-    pages = str2num(pagesString);
-end
-%}
+ppb = metaData.pagesPerBlock;
 
+%{
 if(isempty(pagesString))
     pages = (0:(metaData.pagesPerBlock-1));
 elseif (strcmpi(pagesString,'low'))
@@ -52,11 +43,38 @@ elseif (strcmpi(pagesString,'high'))
 else
     pages = str2num(pagesString);
 end
+%}
+if metaData.architecture == architecture.mlc
+    low_pages = po(1:ppb/2);
+    high_pages = po(1+(ppb/2):end);
+else
+    low_pages = po(1:ppb/3);
+    middle_pages = po(ppb/3+1:2*(ppb/3));
+    high_pages = po(2*(ppb/3)+1:end);
+end
+
+if(isempty(pagesString))
+    pages = (0:(ppb-1));
+elseif (strcmpi(pagesString,'low'))
+    pages = low_pages;
+elseif (strcmpi(pagesString, 'middle'))
+    if metaData.architecture == architecture.tlc
+        pages = middle_pages;
+    else
+        msgbox('"middle" filter is only meaningful for TLC architecture');
+        return;
+    end
+elseif (strcmpi(pagesString,'high'))
+    pages = high_pages;
+else
+    pages = str2num(pagesString);
+end
 
 if(isempty(pages))
     msgbox('Ivalid "Pages to show" String - Could not parse the pages');
     return;
 end
+
 figure
 title('Ber Per  Page');
 ylabel('P/E cycle');
@@ -74,26 +92,11 @@ hold on
 for i = 0:(metaData.pagesPerBlock-1) 
     if (any(pages == i))
         [~,indexOfI] = ismember(i,po);
-       % X = ones(1,size(M,1)).*i;
         Z = (M(:,2*indexOfI)+M(:,(2*indexOfI)-1))./(metaData.bytesPerPage*8);
         [Y,Z] = averageVector(Z',headIterations, headGroupSize, middleIterations, middleGroupSize,tailGroupSize);
         X = ones(1,size(Y,2)).*i;
-         h = plot3(X,Y,Z);
-       %{
-         if(indexOfI > (metaData.pagesPerBlock/2))
-            set(h,'Color','r');
-            if(~onceHigh)
-                hH = h;
-                onceHigh = true;
-            end
-        else
-            set(h,'Color','b');
-            if(~onceLow)
-                hL = h;
-                onceLow = true;
-            end
-        end
-        %}
+        h = plot3(X,Y,Z);
+ %{
         if (metaData.architecture == architecture.mlc && (indexOfI > (metaData.pagesPerBlock/2))) || ... 
             (metaData.architecture == architecture.tlc && (mod(indexOfI-1,3) == 2))
             set(h,'Color','r');
@@ -116,7 +119,30 @@ for i = 0:(metaData.pagesPerBlock-1)
                 onceMid = true;
             end
         end
+        %}
+        if (any(high_pages == i))
+            set(h,'Color','r');
+            if(~onceHigh)
+                hH = h;
+                onceHigh = true;
+            end
+        elseif (any(low_pages == i))
+            set(h,'Color','b');
+            if(~onceLow)
+                hL = h;
+                onceLow = true;
+            end
+        else
+            % "middle" page
+            set(h,'Color','g');
+            if(~onceMid)
+                hM = h;
+                onceMid = true;
+            end
+        end
+        
     end
+        
 end
 
 if(compactGraph{1} == 1)
@@ -125,15 +151,7 @@ else
     set(gca,'XLim',[0 (metaData.pagesPerBlock-1)]);
 end
 view(45,10);
-%{
-if(onceLow && onceHigh)
-    legend([hL hH],'Low Pages','High Pages','Location','northwest');
-elseif (onceLow)
-    legend('Low Pages','Location','northwest');
-else
-    legend('High Pages','Location','northwest');
-end
-%}
+
 if(onceLow && onceHigh && onceMid)
     legend([hL hM hH],'Low Pages','Middle pages', 'High Pages','Location','northwest');
 elseif (onceLow && onceMid)
