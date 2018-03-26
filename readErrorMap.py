@@ -25,8 +25,10 @@ def calc_sha1(filepath):
 	
 def read_error_map(filepath, read_mode='normal', save_path=None):
 	read_mode = read_mode.lower()
+	print(read_mode)
 	if read_mode not in SUPPORTED_READ_MODES:
-		print('read_mode must be on of the following modes: {}. Got {}.'.format(' | '.join(SUPPORTED_READ_MODES), read_mode))
+		print('read_mode must be on of the following modes: {}. Got {}.'
+				.format(' | '.join(SUPPORTED_READ_MODES), read_mode))
 		exit(-1)
 	
 	path, filename = os.path.split(filepath)

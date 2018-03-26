@@ -68,6 +68,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 disableAveragesParameters(handles);
 disableButtons(handles);
+py.importlib.import_module('readErrorMap');
 
 
 % UIWAIT makes testUI wait for user response (see UIRESUME)

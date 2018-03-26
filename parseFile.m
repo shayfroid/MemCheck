@@ -15,41 +15,23 @@ switch testid
         m = m(:,3:4);
         m = [zeros(size(m,1),1),m];
     case testID.errorMap
-    % prompt for the type of reading (fast - assuming a cell will show 
-    % error in only one of the bits it represents 
-    % (if it represents bit X in pages A,B,C then we
-    % will see an error only in one of the pages at X), or slow -without
-    % that assumption, in that case if there is an erreo in multiple pages
-    % (A and B for example) we will treat it as a single error. That
-    % option requires contiuous sum of the error map and thus a lot slower
-    % but more acuarate option.
-    
-        fast_description = 'fast: assuming each cell with an error\nwill only show an error in one of its represented pages.\n';
-        slow_description = {'slow: no asumptions are made.'
-                            'input validation is being performed on each cell'
-                            'and if it is representing multiple bit errors in the same P/E cycle'
-                            'they will all be considered as a single error.'};
-        title = sprintf('%s\n',['which read method to use?',fast_description, slow_description{:}]);
-        read_method = questdlg(title,'Choose read method','fast','slow','fast');
+        graph_type = questdlg('Choose graph type','Choose graph type','Normal','Levels','Normal');
 
-       graph_type = questdlg(title,'Choose graph type','Normal','Levels','Normal');
-
-       if strcmp(graph_type, 'Levels')
-          set(handles.errorMapButton, 'string', 'Bit Error Map (Levels)');
-       else
-          set(handles.errorMapButton, 'string', 'Bit Error Map');
-       end
-
-        if ((strcmp(read_method,'fast')) || strcmp(graph_type, 'Levels'))
-            m = readErrorMap(filePath,numOfLines, graph_type);
+        %{
+        if strcmp(graph_type, 'Levels')
+           set(handles.errorMapButton, 'string', 'Bit Error Map (Levels)');
         else
-            m = readErrorMapCalibrated(filePath,numOfLines, graph_type);
+           set(handles.errorMapButton, 'string', 'Bit Error Map');
         end
+        %}
 
+        cache_path = py.readErrorMap.read_error_map(filePath, pyargs('read_mode',lower(graph_type)));
+        m = readNPY(char(cache_path));
+        
     otherwise
         m = zeros(1,1);
-%          err = sprintf('Error reading files.\n metaData for file:\n %s\n specifies test ID of %d which is not supported yet',...
-%             filepath,metaData(6));
-%         waitfor(msgbox(err,'Error in test ID')); 
+%           err = sprintf('Error reading files.\n metaData for file:\n %s\n specifies test ID of %d which is not supported yet',...
+%           filepath,metaData(6));
+%           waitfor(msgbox(err,'Error in test ID')); 
         return;
 end
