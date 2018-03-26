@@ -25,8 +25,10 @@ def calc_sha1(filepath):
 	
 def read_error_map(filepath, read_mode='normal', save_path=None):
 	read_mode = read_mode.lower()
+	print(read_mode)
 	if read_mode not in SUPPORTED_READ_MODES:
-		print('read_mode must be on of the following modes: {}. Got {}.'.format(' | '.join(SUPPORTED_READ_MODES), read_mode))
+		print('read_mode must be on of the following modes: {}. Got {}.'
+				.format(' | '.join(SUPPORTED_READ_MODES), read_mode))
 		exit(-1)
 	
 	path, filename = os.path.split(filepath)
@@ -115,7 +117,7 @@ def read_error_map(filepath, read_mode='normal', save_path=None):
 			left_high = m[pages_order[int(pagesPerBlock/2)::2], :]
 			right_high = m[pages_order[int(pagesPerBlock/2)+1::2], :]
 			
-			left = np.concatenate((left_low,left_high))
+			left = np.concatenate((left_low, left_high))
 			right = np.concatenate((right_low, right_high))
 		else:
 			left_low = m[pages_order[0:int(pagesPerBlock/3):2], :]
