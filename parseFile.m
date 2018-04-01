@@ -17,16 +17,15 @@ switch testid
     case testID.errorMap
         graph_type = questdlg('Choose graph type','Choose graph type','Normal','Levels','Normal');
 
-        %{
+
         if strcmp(graph_type, 'Levels')
            set(handles.errorMapButton, 'string', 'Bit Error Map (Levels)');
         else
            set(handles.errorMapButton, 'string', 'Bit Error Map');
         end
-        %}
 
-        cache_path = py.readErrorMap.read_error_map(filePath, pyargs('read_mode',lower(graph_type)));
-<<<<<<< HEAD
+        numcores = feature('numcores');
+        cache_path = py.ReadErrorMap_MP.read_error_map(filePath, pyargs('read_mode',lower(graph_type),'num_workers',int32(numcores)));
         m = cast(readNPY(char(cache_path)), 'double');
         
     otherwise
