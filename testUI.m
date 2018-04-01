@@ -68,7 +68,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 disableAveragesParameters(handles);
 disableButtons(handles);
-py.importlib.import_module('readErrorMap');
+py.importlib.import_module('ReadErrorMap_MP');
 
 
 % UIWAIT makes testUI wait for user response (see UIRESUME)
@@ -226,20 +226,10 @@ set(handles.multipleSetsCB,'value',0);
 function setErrorMapFilterValues(handles,min, max)
 % DISABLEBUTTONS sets the values in the Error Map section in the Gui.
 % handles    structure with handles and user data (see GUIDATA)
-min
-class(min)
-max
-class(max)
 
 set(handles.errorMapSliderMin,'max',max);
-get(handles.errorMapSliderMin,'max')
-
 set(handles.errorMapSliderMin,'value',0);
-get(handles.errorMapSliderMin,'value')
-
 set(handles.errorMapSliderMin,'SliderStep',[1/max,1/max]);
-get(handles.errorMapSliderMin,'SliderStep')
-
 set(handles.errorMap_Min,'string','0');
 set(handles.errorMap_Max,'string',num2str(max));
 set(handles.errorMapSlider_Max,'max',max);
