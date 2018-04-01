@@ -26,6 +26,7 @@ switch testid
         %}
 
         cache_path = py.readErrorMap.read_error_map(filePath, pyargs('read_mode',lower(graph_type)));
+<<<<<<< HEAD
         m = cast(readNPY(char(cache_path)), 'double');
         
     otherwise
