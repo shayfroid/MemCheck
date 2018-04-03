@@ -2,7 +2,6 @@ import numpy as np
 from numpy import zeros, concatenate, fromstring, uint32
 import os
 import hashlib
-import time
 import multiprocessing as mpr
 import ctypes
 
@@ -122,7 +121,6 @@ def read_error_map_worker(lines_q, result_arr, result_dimensions, read_mode, fil
 
 
 def read_error_map(filepath, read_mode='normal', save_path=None, num_workers=None):
-	t1 = time.clock()
 	if read_mode not in SUPPORTED_READ_MODES:
 		print('read_mode must be on of the following modes: {}. Got {}.'
 				.format(' | '.join(SUPPORTED_READ_MODES), read_mode))
@@ -139,7 +137,7 @@ def read_error_map(filepath, read_mode='normal', save_path=None, num_workers=Non
 	# filepath is not a _mem_check_cache.npy file.
 	# calculate the sha1 function and check if a cache file already exist for that file
 	_sha1 = calc_sha1(filepath)
-	cache_file_name = filename + '_' + _sha1 + '_mem_check_cache_' + read_mode + '_line_numbers'
+	cache_file_name = filename + '_' + _sha1 + '_mem_check_cache_' + read_mode
 	
 	if save_path:
 		cache_full_path = os.path.join(save_path, cache_file_name)
@@ -196,9 +194,5 @@ def read_error_map(filepath, read_mode='normal', save_path=None, num_workers=Non
 	res = np.ctypeslib.as_array(result_arr.get_obj())
 	res.shape = result_dimensions
 	
-	np.save(cache_full_path, res)
-	
-	print(f'time: {time.clock()-t1}')
-	print(cache_full_path + '.npy')
-	
+	np.save(cache_full_path, res)	
 	return cache_full_path + '.npy'

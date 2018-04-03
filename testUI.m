@@ -227,19 +227,10 @@ set(handles.multipleSetsCB,'value',0);
 function setErrorMapFilterValues(handles,min, max)
 % DISABLEBUTTONS sets the values in the Error Map section in the Gui.
 % handles    structure with handles and user data (see GUIDATA)
-min
-class(min)
-max
-class(max)
 
 set(handles.errorMapSliderMin,'max',max);
-get(handles.errorMapSliderMin,'max')
-
 set(handles.errorMapSliderMin,'value',0);
-get(handles.errorMapSliderMin,'value')
-
 set(handles.errorMapSliderMin,'SliderStep',[1/max,1/max]);
-get(handles.errorMapSliderMin,'SliderStep')
 
 set(handles.errorMap_Min,'string','0');
 set(handles.errorMap_Max,'string',num2str(max));
@@ -402,7 +393,6 @@ switch metaData.testID
             %disable part2 button and enable LLH button
             set(handles.LLHbutton,'Enable','on');
             set (handles.button_load2,'Enable','off');
-            
         end
     case testID.errorMap
         disableButtons(handles);
@@ -410,6 +400,14 @@ switch metaData.testID
         disableAveragesParameters(handles);
         enableErrorMap(handles);
         setErrorMapFilterValues(handles,min(M(:)), max(M(:)));
+        
+        if size(M,1)==metaData.pagesPerBlock/2
+            % Levels was selected:
+            set(handles.errorMapCB, 'Enable','off');
+            set(handles.errorMapCB, 'Value', 0);
+        else
+            % mormal ploting     
+        end
 
     otherwise
          return;
