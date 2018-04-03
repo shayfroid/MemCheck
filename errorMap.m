@@ -59,12 +59,14 @@ else
     
     figure
     h = stem3(left,'marker','.', 'markersize',markers_size);
+    l_graph = h;
     if(markers == 0)
         set(h,'marker','none');
     end
     set(h,'Color','b');
     hold on
     h = stem3(right,'marker','.', 'markersize',markers_size);
+    r_graph = h;
     if(markers == 0)
         set(h,'marker','none');
     end
@@ -78,6 +80,6 @@ else
     end
     zlabel('Errors');
     xlabel('Cell');
-    %set(gca,'XLim',[0 metaData(4)*8]);
     set(gca,'YLim',[0 size(M,1)]);
+    legend([l_graph r_graph], 'Left pages','Right pages', 'Location','northwest');
 end

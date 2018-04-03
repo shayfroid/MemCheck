@@ -130,32 +130,3 @@ zlabel('Errors');
 xlabel('Cell');
 set(gca,'YLim',[0 size(left_high,1)]);
 legend([h_l h_r], 'High left','High right', 'Location','northwest');
-%{    
-else
-    % combine graphs
-    left = NaN(size(M));
-    left(:,1:2:end) = M(:,1:size(M,2)/2);
-    right = NaN(size(M));
-    right(:,2:2:end) = M(:,(size(M,2)/2)+1:end);
-    
-    figure
-    h = stem3(left,'marker','.', 'markersize',markers_size);
-    if(markers == 0)
-        set(h,'marker','none');
-    end
-    set(h,'Color','b');
-    hold on
-    h = stem3(right,'marker','.', 'markersize',markers_size);
-    if(markers == 0)
-        set(h,'marker','none');
-    end
-    set(h,'Color','r');
-    hold off
-    title(sprintf('Bit Error Map - left & right (%s)%s',arc_strings{metaData.architecture + 1},filterString));
-    ylabel('Row');
-    zlabel('Errors');
-    xlabel('Cell');
-    %set(gca,'XLim',[0 metaData(4)*8]);
-    set(gca,'YLim',[0 size(M,1)]);
-end
-%}
