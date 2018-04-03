@@ -24,9 +24,9 @@ if(combine ~= 1)
     end
     title(sprintf('Bit Error Map - left (%s)%s',arc_strings{metaData.architecture + 1}, filterString));
     if metaData.architecture == architecture.mlc
-        ylabel('Pair');
+        ylabel('Row');
     else
-        ylabel('Triplet');
+        ylabel('Word Line');
     end
     zlabel('Errors');
     xlabel('Cell');
@@ -41,9 +41,9 @@ if(combine ~= 1)
     end
     title(sprintf('Bit Error Map - right (%s)%s',arc_strings{metaData.architecture + 1},filterString));
     if metaData.architecture == architecture.mlc
-        ylabel('Pair');
+        ylabel('Row');
     else
-        ylabel('Triplet');
+        ylabel('Word Line');
     end
     zlabel('Errors');
     xlabel('Cell');
