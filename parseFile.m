@@ -15,7 +15,7 @@ switch testid
         m = m(:,3:4);
         m = [zeros(size(m,1),1),m];
     case testID.errorMap
-        graph_type = questdlg('Choose graph type','Choose graph type','Normal','Levels','Normal');
+        graph_type = questdlg('Choose graph type','Choose graph type','Planes','Levels','Planes');
 
         if strcmp(graph_type, 'Levels')
            set(handles.errorMapButton, 'string', 'Bit Error Map (Levels)');   

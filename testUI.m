@@ -404,9 +404,7 @@ switch metaData.testID
         if size(M,1)==metaData.pagesPerBlock/2
             % Levels was selected:
             set(handles.errorMapCB, 'Enable','off');
-            set(handles.errorMapCB, 'Value', 0);
-        else
-            % mormal ploting     
+            set(handles.errorMapCB, 'Value', 0);    
         end
 
     otherwise
@@ -1140,7 +1138,7 @@ if size(M,1)==metaData.pagesPerBlock/2
     % ploting by levels.
     errorMapLevels(M, metaData, min,max,cb,markers,markers_size);
 else
-    % mormal ploting
+    % ploting by planes
     errorMap(M, metaData, min,max,cb,markers,markers_size);
 end
 

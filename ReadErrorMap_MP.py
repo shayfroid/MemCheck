@@ -6,11 +6,10 @@ import multiprocessing as mpr
 import ctypes
 
 READ_CHUNK_SIZE = 300 * 1024 * 1024
-SUPPORTED_READ_MODES = ['normal', 'levels']
+SUPPORTED_READ_MODES = ['planes', 'levels']
 
 
 def calc_sha1(filepath):
-	t1 = time.clock()
 	_hash = hashlib.sha1()
 	with open(filepath, 'rb') as f:
 		while True:
@@ -55,8 +54,8 @@ def read_error_map_worker(lines_q, result_arr, result_dimensions, read_mode, fil
 		line = fid.readline()
 		prev_line = line_num
 		
-		if read_mode == 'normal':
-			# in normal read mode we need to reset m each line that we read in order to be able to detect
+		if read_mode == 'planes':
+			# in planes read mode we need to reset m each line that we read in order to be able to detect
 			# if a cell error caused bit error  in more then one page.
 			m = zeros((pages_per_block, bytes_per_page * 8), 'uint16')
 		
@@ -71,14 +70,14 @@ def read_error_map_worker(lines_q, result_arr, result_dimensions, read_mode, fil
 			i = i + arr[i] + 1
 			bits = concatenate((bits, arr[i + 1:i + arr[i] + 1]))
 			i = i + arr[i] + 1
-			if read_mode == 'normal':
+			if read_mode == 'planes':
 				m[page, bits] = 1
 			elif read_mode == 'levels':
 				m[page, bits] += 1
 			else:
 				raise NotImplemented
 		
-		if read_mode == 'normal':
+		if read_mode == 'planes':
 			i = 0
 			while i < pages_coupling.shape[0]:
 				summed_errors_per_loop = (m[pages_coupling[i, :], :]).sum(axis=0)
@@ -88,7 +87,7 @@ def read_error_map_worker(lines_q, result_arr, result_dimensions, read_mode, fil
 			
 	fid.close()
 	
-	if read_mode == 'normal':
+	if read_mode == 'planes':
 		left = summed_errors[0::2, :]
 		right = summed_errors[1::2, :]
 	else:
@@ -120,7 +119,7 @@ def read_error_map_worker(lines_q, result_arr, result_dimensions, read_mode, fil
 		print(f'{mpr.current_process().pid} done')
 
 
-def read_error_map(filepath, read_mode='normal', save_path=None, num_workers=None):
+def read_error_map(filepath, read_mode='planes', save_path=None, num_workers=None):
 	if read_mode not in SUPPORTED_READ_MODES:
 		print('read_mode must be on of the following modes: {}. Got {}.'
 				.format(' | '.join(SUPPORTED_READ_MODES), read_mode))
@@ -160,7 +159,7 @@ def read_error_map(filepath, read_mode='normal', save_path=None, num_workers=Non
 	manager = mpr.Manager()
 	lines_q = manager.Queue()
 
-	if read_mode == 'normal':
+	if read_mode == 'planes':
 		if architecture == 0:# mlc
 			lines_count = int(pages_per_block/4)
 		else:
