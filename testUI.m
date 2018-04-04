@@ -229,10 +229,10 @@ function setErrorMapFilterValues(handles,min, max)
 % handles    structure with handles and user data (see GUIDATA)
 
 set(handles.errorMapSliderMin,'max',max);
-set(handles.errorMapSliderMin,'value',0);
+set(handles.errorMapSliderMin,'value',1);
 set(handles.errorMapSliderMin,'SliderStep',[1/max,1/max]);
 
-set(handles.errorMap_Min,'string','0');
+set(handles.errorMap_Min,'string','1');
 set(handles.errorMap_Max,'string',num2str(max));
 set(handles.errorMapSlider_Max,'max',max);
 set(handles.errorMapSlider_Max,'value',max);
