@@ -202,7 +202,7 @@ set(handles.errorMap_Min,'string','');
 set(handles.errorMap_Max,'string','');
 set(handles.errorMapMarkerSize, 'Enable', 'off');
 set(handles.MarkersSizeText, 'Enable', 'off');
-set(handles.errorMapPairplanesCB, 'Enabled', 'off');
+set(handles.errorMapPairplanesCB, 'Enable', 'off');
 set(handles.errorMapPairplanesCB, 'value', 0);
 
 function disableLLH(handles)
