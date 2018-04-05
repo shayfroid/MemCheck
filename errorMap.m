@@ -18,7 +18,7 @@ if max  > 0
 end
 if(combine ~= 1)
     figure
-    h = stem3(M(:,1:size(M,2)/2),'marker','.', 'markersize',markers_size);
+    h = stem3(0:(size(M,2)/2)-1, 0:size(M,1)-1, M(:,1:size(M,2)/2),'marker','.', 'markersize',markers_size);
     if(markers == 0)
         set(h,'marker','none');
     end
@@ -30,12 +30,13 @@ if(combine ~= 1)
     end
     zlabel('Errors');
     xlabel('Cell');
-    set(gca,'YLim',[0 size(M,1)]);
-    %set(gca,'XLim',[0 metaData(4)*8]);
+    %set(gca,'ytick',0:size(M,1)-1);
+    set(gca,'YLim',[0 size(M,1)-0.97]);
+    set(gca,'XLim',[0 metaData.bytesPerPage*8 - 0.97]);
     grid on
 
     figure
-    h = stem3(M(:,(size(M,2)/2)+1:end),'marker','.', 'markersize',markers_size);
+    h = stem3(0:(size(M,2)/2)-1, 0:size(M,1)-1, M(:,(size(M,2)/2)+1:end),'marker','.', 'markersize',markers_size);
     if(markers == 0)
         set(h,'marker','none');
     end
@@ -47,25 +48,29 @@ if(combine ~= 1)
     end
     zlabel('Errors');
     xlabel('Cell');
-    set(gca,'YLim',[0 size(M,1)]);
-    %set(gca,'XLim',[0 metaData(4)*8]);
+    %set(gca,'ytick',0:size(M,1)-1);
+    set(gca,'YLim',[0 size(M,1)-0.97]);
+    set(gca,'XLim',[0 metaData.bytesPerPage*8 - 0.97]);
     set(h,'Color','r');
     grid on
 else
+    %{
     left = NaN(size(M));
     left(:,1:2:end) = M(:,1:size(M,2)/2);
     right = NaN(size(M));
     right(:,2:2:end) = M(:,(size(M,2)/2)+1:end);
-    
+    %}
+    left = M(:,1:size(M,2)/2);
+    right = M(:,(size(M,2)/2)+1:end);
     figure
-    h = stem3(left,'marker','.', 'markersize',markers_size);
+    h = stem3(0:(size(M,2)/2)-1, 0:size(M,1)-1,left,'marker','.', 'markersize',markers_size);
     l_graph = h;
     if(markers == 0)
         set(h,'marker','none');
     end
     set(h,'Color','b');
     hold on
-    h = stem3(right,'marker','.', 'markersize',markers_size);
+    h = stem3((0:(size(M,2)/2)-1) + 0.1, 0:size(M,1)-1,right,'marker','.', 'markersize',markers_size);
     r_graph = h;
     if(markers == 0)
         set(h,'marker','none');
@@ -80,6 +85,8 @@ else
     end
     zlabel('Errors');
     xlabel('Cell');
-    set(gca,'YLim',[0 size(M,1)]);
+    %set(gca,'ytick',0:size(M,1)-1);
+    set(gca,'YLim',[0 size(M,1)-0.97]);
+    set(gca,'XLim',[0 metaData.bytesPerPage*8-0.8]);
     legend([l_graph r_graph], 'Left pages','Right pages', 'Location','northwest');
 end

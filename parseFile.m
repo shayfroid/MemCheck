@@ -21,6 +21,8 @@ switch testid
            set(handles.errorMapButton, 'string', 'Bit Error Map (Levels)');   
         else
            set(handles.errorMapButton, 'string', 'Bit Error Map');
+           set(handles.errorMapPairplanesCB, 'Enable', 'off');
+           set(handles.errorMapPairplanesCB, 'value', 0);
         end
 
         numcores = feature('numcores');

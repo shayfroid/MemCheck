@@ -22,7 +22,7 @@ function varargout = testUI(varargin)
 
 % Edit the above text to modify the response to help testUI
 
-% Last Modified by GUIDE v2.5 24-Mar-2018 23:41:17
+% Last Modified by GUIDE v2.5 04-Apr-2018 19:04:15
 
 % Begin initialization code - DO NOT EDIT.           
 gui_Singleton = 1;
@@ -185,6 +185,7 @@ set(handles.markersCB,'Enable','on');
 set(handles.errorMapMarkerSize, 'Enable', 'on');
 set(handles.MarkersSizeText, 'Enable', 'on');
 
+
 function disableErrorMap(handles)
 % DISABLEERRORMAP makes the Error Map section in the Gui disabled.
 % handles    structure with handles and user data (see GUIDATA)
@@ -201,6 +202,8 @@ set(handles.errorMap_Min,'string','');
 set(handles.errorMap_Max,'string','');
 set(handles.errorMapMarkerSize, 'Enable', 'off');
 set(handles.MarkersSizeText, 'Enable', 'off');
+set(handles.errorMapPairplanesCB, 'Enabled', 'off');
+set(handles.errorMapPairplanesCB, 'value', 0);
 
 function disableLLH(handles)
 % DISABLELLH makes the LLH section in the Gui disabled.
@@ -404,7 +407,9 @@ switch metaData.testID
         if size(M,1)==metaData.pagesPerBlock/2
             % Levels was selected:
             set(handles.errorMapCB, 'Enable','off');
-            set(handles.errorMapCB, 'Value', 0);    
+            set(handles.errorMapCB, 'Value', 0);
+            set(handles.errorMapPairplanesCB, 'Enable', 'on');
+            set(handles.errorMapPairplanesCB, 'value', 0);
         end
 
     otherwise
@@ -1136,7 +1141,7 @@ markers_size = get(handles.errorMapMarkerSize, 'value');
 % return M with pagesPerBlock/2 rows.
 if size(M,1)==metaData.pagesPerBlock/2
     % ploting by levels.
-    errorMapLevels(M, metaData, min,max,cb,markers,markers_size);
+    errorMapLevels(M, metaData, min,max,cb,markers,markers_size, get(handles.filePathText,'string'), get(handles.errorMapPairplanesCB, 'value'));
 else
     % ploting by planes
     errorMap(M, metaData, min,max,cb,markers,markers_size);
@@ -1351,3 +1356,32 @@ function errorMapMarkerSize_CreateFcn(hObject, eventdata, handles)
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
+
+
+% --- Executes on button press in errorMapPairplanesCB.
+function errorMapPairplanesCB_Callback(hObject, eventdata, handles)
+% hObject    handle to errorMapPairplanesCB (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of errorMapPairplanesCB
+
+
+% --- Executes on key press with focus on markersCB and none of its controls.
+function markersCB_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to markersCB (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.CONTROL.UICONTROL)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on key press with focus on errorMapPairplanesCB and none of its controls.
+function errorMapPairplanesCB_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to errorMapPairplanesCB (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.CONTROL.UICONTROL)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
