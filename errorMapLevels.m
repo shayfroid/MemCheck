@@ -90,7 +90,8 @@ end
 if(markers == 0)
     set(l_r,'marker','none');
 end
-set(l_r,'Color','g');
+%color - purple
+set(l_r,'Color',[163 0 204]./255);
 hold off
 title(sprintf('Bit Error Map - Low pages - left & right (%s)%s',arc_strings{metaData.architecture + 1},filterString));
 ylabel('Page');
@@ -125,8 +126,7 @@ if metaData.architecture == architecture.tlc
     if(markers == 0)
         set(m_r,'marker','none');
     end
-    % color- light gray
-    set(m_r,'Color',[0.7 0.7 0.7]);
+    set(m_r,'Color','g');
     hold off
     title(sprintf('Bit Error Map - middle pages - left & right (%s)%s',arc_strings{metaData.architecture + 1},filterString));
     ylabel('Page');
