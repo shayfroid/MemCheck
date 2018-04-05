@@ -19,31 +19,6 @@ end
 po = pagesOrder(filepath);
 ppb = metaData.pagesPerBlock;
 
-%{
-if(isempty(pagesString))
-    pages = (0:(metaData.pagesPerBlock-1));
-elseif (strcmpi(pagesString,'low'))
-    if metaData.architecture == architecture.mlc
-        pages = po(1:(metaData.pagesPerBlock/2));
-    else  %metaData.architecture == architecture.tlc
-        pages = po(1:3:end);
-    end
-elseif (strcmpi(pagesString, 'middle'))
-    if metaData.architecture == architecture.tlc
-        pages = po(2:3:end);
-    else
-        throw(MException('MYFUN:Bad_filter', '"middle" filter is only meaningful with TLC architecture'));
-    end
-elseif (strcmpi(pagesString,'high'))
-    if metaData.architecture == architecture.mlc
-        pages = po(1+(metaData.pagesPerBlock/2):metaData.pagesPerBlock);
-    else
-        pages = po(3:3:end);
-    end
-else
-    pages = str2num(pagesString);
-end
-%}
 if metaData.architecture == architecture.mlc
     low_pages = po(1:ppb/2);
     high_pages = po(1+(ppb/2):end);
@@ -68,6 +43,7 @@ elseif (strcmpi(pagesString,'high'))
     pages = high_pages;
 else
     pages = str2num(pagesString);
+    pages = pages(pages < ppb);
 end
 
 if(isempty(pages))

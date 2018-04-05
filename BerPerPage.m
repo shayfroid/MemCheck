@@ -40,6 +40,7 @@ elseif (strcmpi(pagesString,'high'))
     pages = high_pages;
 else
     pages = str2num(pagesString);
+    pages = pages(pages < ppb);
 end
 
 if(isempty(pages))
