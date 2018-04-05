@@ -18,6 +18,7 @@ ppb = metaData.pagesPerBlock;
 
 if metaData.architecture == architecture.mlc
     low_pages = po(1:ppb/2);
+
     high_pages = po(1+(ppb/2):end);
 else
     low_pages = po(1:ppb/3);

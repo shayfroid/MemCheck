@@ -8,12 +8,6 @@ function LevelsAverages(M,metaData,headiterations, headGroupSize, middleIteratio
 % middleGroupSize	Number of interations which we should "group" together to one point in the "Middle" section
 % tailGroupSize		Number of interations which we should "group" together to one point in the "Tail" section
 
-%{
-architecture = 0;
-%if(size(metaData,2) >= 7)
-    architecture = metaData(7);
-end
-%}
 % if metadata is missing architecture info, assuming MLC.
 if (metaData.architecture ~= -1)
     arc = metaData.architecture;
@@ -49,7 +43,6 @@ grid on
 hold on
 
 for i = 1:numOfTicks
-   % X = ones(1,size(M,1)).*i;
     Z = sum(M(:,startingPoint+i:numOfTicks:end),2)./bpb;
     [Y,Z] = averageVector(Z',headiterations, headGroupSize, middleIterations, middleGroupSize,tailGroupSize);
     X = ones(1,size(Y,2)).*i;
@@ -60,7 +53,6 @@ set(gca,'XTick',(1:numOfLevels-1:numOfTicks));
 set(gca,'XMinorTick','off');
 set(gca,'XLim',[1 numOfTicks]);
 
-%set(gca,'XTickLabel', {'0-1','1-0','2-0','3-0'});
 leggendLables = generateLevelsLeggendLables(numOfLevels);
 Xticks = leggendLables(1:numOfLevels-1:end,1:end);
 set(gca,'XTickLabel', Xticks);

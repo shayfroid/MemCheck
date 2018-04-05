@@ -1,6 +1,6 @@
 function x = allDividers(num)
 % ALLDIVIDERS create an array of all the dividers of 'num'
-% x = ALLDIVIDERS(num) returns a 1XN array of all of num dividers as x
+% x = ALLDIVIDERS(num) returns a 1XN array of all of num's dividers as x
 
 % first lets get the factorization of the number
 fact = factor(num);

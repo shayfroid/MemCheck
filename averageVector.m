@@ -12,7 +12,6 @@ function [X,Y] = averageVector(vect,headIterations,headGroupSize,middleIteration
 if ~isrow(vect)
    error('MyComponent:incorrectType',...
        'Error. \nInput must be a row  vector.');
-   %return;
 end
 
 head_x = [];

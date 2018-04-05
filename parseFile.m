@@ -1,14 +1,15 @@
 function m = parseFile(filePath,testid, numOfLines, handles)
 % m = PARSEFILE(filePath, testid, numOfLines) parsing the file and fetch the data according to the test we check
-%testID = getTestID(filePath);
+% filepath - path to the file.
+% testId - from metaData.
+% numOfLines - number of P\E cycles in the file.
+% handles - gui handles.
+
 switch testid
     case testID.standardTest
         m = dlmread(filePath,'\t',2,1);
     case {testID.fullLLH,testID.partialLLH1}
         m = dlmread(filePath,'\t',2,1);
-        %n1 = n(:,1:metaData(3));
-        %n2 = n(:,metaData(3)+1:2*metaData(3));
-        %m = [n1+n2,n(:,2*metaData(3)+1:end)];
         m = m(:,2:4);
     case testID.partialLLH2
         m = dlmread(filePath,'\t',2,1);
@@ -31,8 +32,5 @@ switch testid
         
     otherwise
         m = zeros(1,1);
-%           err = sprintf('Error reading files.\n metaData for file:\n %s\n specifies test ID of %d which is not supported yet',...
-%           filepath,metaData(6));
-%           waitfor(msgbox(err,'Error in test ID')); 
         return;
 end

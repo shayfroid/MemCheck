@@ -6,8 +6,6 @@ function Levels(M,metaData)
 % works only for all points, for average see LEVELSAVERAGES
 
 % if metadata is missing architecture info, assuming MLC.
-%architecture = 0;
-%if(size(metaData,2) >= 7)
 if (metaData.architecture ~= -1)
     arc = metaData.architecture;
 else
@@ -51,7 +49,6 @@ set(gca,'XTick',(1:numOfLevels-1:numOfTicks));
 set(gca,'XMinorTick','off');
 set(gca,'XLim',[1 numOfTicks]);
 
-%set(gca,'XTickLabel', {'0-1','1-0','2-0','3-0'});
 leggendLables = generateLevelsLeggendLables(numOfLevels);
 Xticks = leggendLables(1:numOfLevels-1:end,1:end);
 set(gca,'XTickLabel', Xticks);

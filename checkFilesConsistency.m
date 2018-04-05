@@ -11,19 +11,9 @@ if nargin == 2
     expectedTestID = testID.supportedTestID;
 end
 
-% if(ischar(filenames))
-%     consist = true;
-%     numOfLines = countLines(strcat(filepath,filenames));
-%     s = strcat(filepath,filenames);
-%     fid = fopen(s);
-%     local_metaData = str2num(fgets(fid));
-%     fclose(fid);    
-%     return;
-% end
 if (isa(filenames,'numeric'))
     numOfLines = 0;
     consist = false;
-    %local_metaData = [];
     return; 
 end
 
@@ -54,13 +44,12 @@ end
 if(local_metaData.testID == testID.errorMap && ~ischar(filenames) && size(filenames,2) > 1)
     err = sprintf('Error.\n Loading more then 1 file with test ID of 5 (Bit Eror Map) is not supported.\n');
     msgbox(err,'Error reading files');
-    consist = false
+    consist = false;
     numOfLines = 0;
     return;
 end
 
 %Test if loaded file coresponds to expected test id. 
-%if ((expectedTestID >=0) && local_metaData(6)~= expectedTestID)
 if (~any(expectedTestID == local_metaData.testID))
      err = sprintf('Error. Expected files of test ID = %d.\n %s have testID of %d\n',...
             expectedTestID, s, local_metaData.testID);
@@ -70,7 +59,6 @@ if (~any(expectedTestID == local_metaData.testID))
     return
 end
 %test for loading testID of 4 before we have testID 3 loaded
-%if ((expectedTestID ~= testID.partialLLH2) && local_metaData(6)== testID.partialLLH2)
 if (firstRead && local_metaData.testID== testID.partialLLH2)
      err = sprintf('Error. Loaded test ID of 4 (partial LLH second part)\nbefore test ID 3 (partial LLH first part) was loaded.');
     msgbox(err,'Incorrect file loaded.');
@@ -90,9 +78,6 @@ end
 
 if(any(testID.allowedMixing == local_metaData.testID) && firstRead)
     expectedTestID = testID.allowedMixing;
-%else
-    
-   % expectedTestID = local_metaData(6);
 end
 
 % check consistency of metadata, header and num of lines
@@ -105,15 +90,15 @@ for i = 2:size(filenames,2)
     founderror = false;
     if (local_metaData.pagesPerBlock ~= metaDataTmp.pagesPerBlock)
         err = sprintf('Error in meta data comparison.\n%s have %d pages per block while previous files had %d.', ...
-        filenames{i}, metaDataTmp.pagesPerBlock, local_metaData.pagesPerBlock)
+        filenames{i}, metaDataTmp.pagesPerBlock, local_metaData.pagesPerBlock);
         founderror = true;
     elseif (local_metaData.bytesPerPage ~= metaDataTmp.bytesPerPage)
         err = sprintf('Error in meta data comparison.\n%s have %d bytes per page  while previous files had %d.', ...
-        filenames{i}, metaDataTmp.bytesPerPage, local_metaData.bytesPerPage)
+        filenames{i}, metaDataTmp.bytesPerPage, local_metaData.bytesPerPage);
         founderror = true;
     elseif (local_metaData.architecture ~= metaDataTmp.architecture)
         err = sprintf('Error in meta data comparison.\n%s have architecture of %d while previous files had %d.', ...
-        filenames{i}, metaDataTmp.architecture, local_metaData.architecture)
+        filenames{i}, metaDataTmp.architecture, local_metaData.architecture);
         founderror = true;
     end
     
@@ -123,26 +108,6 @@ for i = 2:size(filenames,2)
         msgbox(err,'Error in files consistency');
         return;
     end
-        
-    %{
-    %Testing equal metaData basic values
-    localToCompare = zeros(size(local_metaData));
-    localToCompare(1,[3 4 7]) = localToCompare(1,[3 4 7]) + local_metaData(1,[3 4 7]);
-    tmpToCompare = zeros(size(metaDataTmp));
-    tmpToCompare(1,[3 4 7]) = tmpToCompare(1,[3 4 7]) + metaDataTmp(1,[3 4 7]);
-    comp = (localToCompare == tmpToCompare);
-    [different,indexOfDifferent] = ismember(0,comp);
-    if(different)
-       % local_metaData
-       %metaDataTmp
-        err = sprintf('Error in meta data comparison.\n %s have metadata(%d) of %d\n while other file\\s have value of %d.',...
-            filenames{i},indexOfDifferent,metaDataTmp(indexOfDifferent),local_metaData(indexOfDifferent));
-        msgbox(err,'Error in files consistency');
-        consist = false;
-        fclose(fid);
-        return;
-    end
-    %}
     
     if(~any(expectedTestID == metaDataTmp.testID))
         expStr = sprintf('%d\\',expectedTestID);

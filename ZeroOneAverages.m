@@ -11,7 +11,6 @@ function ZeroOneAverages(M,metaData,headiterations, headGroupSize, middleIterati
 bpb = metaData.bytesPerPage*metaData.pagesPerBlock*8;
 
 % reading the data to matrix to create graph
-%M = dlmread(filename,'\t',2,1);
 M_01 = sum(M(:,1:2:(2*metaData.pagesPerBlock-1)),2)./bpb;
 [X_01,M_01] = averageVector(M_01',headiterations, headGroupSize, middleIterations, middleGroupSize,tailGroupSize);
 M_10 = sum(M(:,2:2:(2*metaData.pagesPerBlock)),2)./bpb;

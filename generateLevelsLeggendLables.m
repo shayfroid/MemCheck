@@ -1,7 +1,5 @@
 function lables = generateLevelsLeggendLables(numOfLevels)
-values = [0:numOfLevels-1];
-%currentValueIndex = 1;
-%lables = NaN(1,numOfLevels^2-numOfLevels)
+values = 0:numOfLevels-1;
 lables=[];
 for currentValue = values
     for otherValue = values

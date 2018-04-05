@@ -1,5 +1,16 @@
-function errorMapLevels(M,metaData,min,max,combine,markers,markers_size, filepath, pair_planes)
-% ERRORMAP Builds the error-map graph 
+function errorMapLevels(M,metaData,min,max,markers,markers_size, filepath, pair_planes)
+% ERRORMAPLEVELS Builds the error-map graph by the level of pages (low, middle and high pages)
+% M - input matrix.
+% metaData - file's Meta Data.
+% min - minimum error to display.
+% max - maximum error to display.
+% combine - join pleft and right (planes) graphs to a single graph.
+% markers - add a marker to the top of the stems.
+% marker_size - diameter of the marker on top of the stems.
+%filepath - path to the file that was parsed. needed in order to get the
+%pages order for propper display.
+%pair_planes - should the function plot the right pages to the side of the
+%left pages or in their real place (page number)
 arc_strings = {'MLC','TLC'};
 
 filterString = '';
@@ -65,16 +76,8 @@ else
 
 end
 
-%if(combine ~= 1)
+
 %################### Low Pages ##################################
-%{
-left = NaN(size(left_low,1),2*size(left_low,2));
-left(:,1:2:end) = left_low;
-right = NaN(size(right_low,1),2*size(right_low,2));
-right(:,2:2:end) = right_low;
-%}
-    %left = M(:,1:size(M,2)/2);
-    %right = M(:,(size(M,2)/2)+1:end);
 figure
 l_l = stem3(0:(size(M,2)/2)-1, left_low_pages, left_low,'marker','.', 'markersize',markers_size);
 if(markers == 0)
@@ -102,14 +105,7 @@ set(gca,'XLim',[0 metaData.bytesPerPage*8-0.8]);
 legend([l_l l_r], 'Low left','Low right', 'Location','northwest');
 
 %################### Mid Pages ##################################
-if metaData.architecture == architecture.tlc
-   %{
-    left = NaN(size(left_mid,1),2*size(left_mid,2));
-    left(:,1:2:end) = left_mid;
-    right = NaN(size(right_mid,1),2*size(right_mid,2));
-    right(:,2:2:end) = right_mid;
-    %}
-    
+if metaData.architecture == architecture.tlc  
     figure
     m_l = stem3(0:(size(M,2)/2)-1, left_mid_pages, left_mid,'marker','.', 'markersize',markers_size);
     if(markers == 0)
@@ -137,12 +133,6 @@ if metaData.architecture == architecture.tlc
     legend([m_l m_r], 'Middle left','Middle right', 'Location','northwest');
 end    
 %################### High Pages ##################################
-%{
-left = NaN(size(left_high,1),2*size(left_high,2));
-left(:,1:2:end) = left_high;
-right = NaN(size(right_high,1),2*size(right_high,2));
-right(:,2:2:end) = right_high;
-%}
 figure
 h_l = stem3(0:(size(M,2)/2)-1, left_high_pages, left_high,'marker','.', 'markersize',markers_size);
 if(markers == 0)

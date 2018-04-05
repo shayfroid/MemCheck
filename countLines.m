@@ -4,8 +4,7 @@ function count =  countLines(filename)
 fid = fopen(filename);
 meta = metaData(str2num(fgets(fid)));
 fclose(fid);
-%if num of PE cycles is givven by metaData
-%if(size(meta,2) >= 8)
+
 if (meta.numOfPECycles ~= -1)
     count = meta.numOfPECycles;
     return;
@@ -14,9 +13,6 @@ else
     command = sprintf('%s%s%s',s,filename, ' | find "0" /c');
     [status,cmdout] = dos(command);
 
-    % fid = fopen(filename);
-    % meta = str2num(fgets(fid));
-    % fclose(fid);
     
     % bit error map dont only have 1 non data line (meta data line). other 
     % files have 2 non data lines (metadata and header lines)

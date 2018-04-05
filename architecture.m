@@ -1,5 +1,5 @@
 classdef architecture
-    %architecture Summary of this class goes here
+    %architecture container for the values of different architectures
     %   Detailed explanation goes here
     
     properties (Constant)

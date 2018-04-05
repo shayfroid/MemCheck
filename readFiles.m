@@ -23,7 +23,6 @@ if(~secondRead)
     end
     firstPath = s;
     fid = fopen(s);
-    %meta = str2num(fgets(fid));
     meta = metaData(str2num(fgets(fid)));
     fclose(fid);
     %case trying to read LLH second part
@@ -72,7 +71,6 @@ for i = startingIndex:size(filenames,2)
     else
         n{i} = tmp_n;
     end
-    %n = n + tmp_n;
     totalFilesRead = totalFilesRead +1;
 end
 m = n;

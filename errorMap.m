@@ -1,5 +1,12 @@
 function errorMap(M,metaData,min,max,combine,markers,markers_size)
 % ERRORMAP Builds the error-map graph 
+% M - input matrix.
+% metaData - file's Meta Data.
+% min - minimum error to display.
+% max - maximum error to display.
+% combine - join pleft and right (planes) graphs to a single graph.
+% markers - add a marker to the top of the stems.
+% marker_size - diameter of the marker on top of the stems.
 arc_strings = {'MLC','TLC'};
 
 filterString = '';
@@ -13,9 +20,9 @@ if max  > 0
         filterString = sprintf(', Error <= %d',max);
     else
         filterString = strcat(filterString, sprintf(' < %d',max));
-    end
-    
+    end  
 end
+
 if(combine ~= 1)
     figure
     h = stem3(0:(size(M,2)/2)-1, 0:size(M,1)-1, M(:,1:size(M,2)/2),'marker','.', 'markersize',markers_size);
@@ -30,7 +37,6 @@ if(combine ~= 1)
     end
     zlabel('Errors');
     xlabel('Cell');
-    %set(gca,'ytick',0:size(M,1)-1);
     set(gca,'YLim',[0 size(M,1)-0.97]);
     set(gca,'XLim',[0 metaData.bytesPerPage*8 - 0.97]);
     grid on
@@ -48,18 +54,12 @@ if(combine ~= 1)
     end
     zlabel('Errors');
     xlabel('Cell');
-    %set(gca,'ytick',0:size(M,1)-1);
     set(gca,'YLim',[0 size(M,1)-0.97]);
     set(gca,'XLim',[0 metaData.bytesPerPage*8 - 0.97]);
     set(h,'Color','r');
     grid on
+
 else
-    %{
-    left = NaN(size(M));
-    left(:,1:2:end) = M(:,1:size(M,2)/2);
-    right = NaN(size(M));
-    right(:,2:2:end) = M(:,(size(M,2)/2)+1:end);
-    %}
     left = M(:,1:size(M,2)/2);
     right = M(:,(size(M,2)/2)+1:end);
     figure
@@ -85,7 +85,6 @@ else
     end
     zlabel('Errors');
     xlabel('Cell');
-    %set(gca,'ytick',0:size(M,1)-1);
     set(gca,'YLim',[0 size(M,1)-0.97]);
     set(gca,'XLim',[0 metaData.bytesPerPage*8-0.8]);
     legend([l_graph r_graph], 'Left pages','Right pages', 'Location','northwest');
