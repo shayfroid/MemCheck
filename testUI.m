@@ -1141,7 +1141,7 @@ markers_size = get(handles.errorMapMarkerSize, 'value');
 % return M with pagesPerBlock/2 rows.
 if size(M,1)==metaData.pagesPerBlock/2
     % ploting by levels.
-    errorMapLevels(M, metaData, min,max,cb,markers,markers_size, get(handles.filePathText,'string'), get(handles.errorMapPairplanesCB, 'value'));
+    errorMapLevels(M, metaData, min,max,markers,markers_size, get(handles.filePathText,'string'), get(handles.errorMapPairplanesCB, 'value'));
 else
     % ploting by planes
     errorMap(M, metaData, min,max,cb,markers,markers_size);
