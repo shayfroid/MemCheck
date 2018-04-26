@@ -92,7 +92,7 @@ for i = 0:(metaData.pagesPerBlock-1)
     end
 end
 if(compactGraph{1} == 1)
-    set(gca,'XLim',[0 max(1,max(pages))]);
+    set(gca,'XLim',[min(max(1,max(pages)), min(pages)) max(1,max(pages))]);
 else
     set(gca,'XLim',[0 (metaData.pagesPerBlock-1)]);
 end
