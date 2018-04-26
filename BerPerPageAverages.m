@@ -72,30 +72,7 @@ for i = 0:(metaData.pagesPerBlock-1)
         [Y,Z] = averageVector(Z',headIterations, headGroupSize, middleIterations, middleGroupSize,tailGroupSize);
         X = ones(1,size(Y,2)).*i;
         h = plot3(X,Y,Z);
- %{
-        if (metaData.architecture == architecture.mlc && (indexOfI > (metaData.pagesPerBlock/2))) || ... 
-            (metaData.architecture == architecture.tlc && (mod(indexOfI-1,3) == 2))
-            set(h,'Color','r');
-            if(~onceHigh)
-                hH = h;
-                onceHigh = true;
-            end
-        elseif metaData.architecture == architecture.mlc || ...
-                (mod(indexOfI-1,3) == 0)
-            set(h,'Color','b');
-            if(~onceLow)
-                hL = h;
-                onceLow = true;
-            end
-        else
-            % TLC architecture and "middle" page
-            set(h,'Color','g');
-            if(~onceMid)
-                hM = h;
-                onceMid = true;
-            end
-        end
-        %}
+
         if (any(high_pages == i))
             set(h,'Color','r');
             if(~onceHigh)
@@ -122,7 +99,7 @@ for i = 0:(metaData.pagesPerBlock-1)
 end
 
 if(compactGraph{1} == 1)
-    set(gca,'XLim',[0 max(1,max(pages))]);
+    set(gca,'XLim',[min(max(1,max(pages)), min(pages)) max(1,max(pages))]);
 else
     set(gca,'XLim',[0 (metaData.pagesPerBlock-1)]);
 end
